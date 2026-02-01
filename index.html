@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <base href="." />
-    <title>Jarvis | TinyLlama WebGPU</title>
+    <title>Jarvis | Qwen 0.5B Core</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -21,7 +21,6 @@
             overflow: hidden; position: fixed;
         }
         #root { height: 100svh; display: flex; flex-direction: column; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .glass-panel { background: rgba(12, 12, 14, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -43,7 +42,7 @@
 
     <script type="module">
         import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2";
-        // Configure global environment for maximum browser compatibility
+        // Global configuration for browser environment
         env.allowLocalModels = false;
         env.useBrowserCache = true;
         env.allowRemoteModels = true;
@@ -51,8 +50,8 @@
     </script>
 
     <script type="text/babel">
-        // Switching to TinyLlama as it has the most reliable ONNX weights for v2 Transformers.js
-        const MODEL_ID = "Xenova/TinyLlama-1.1B-Chat-v1.0";
+        // Using Qwen2.5-0.5B for a significant jump in logic over 132M models
+        const MODEL_ID = "onnx-community/Qwen2.5-0.5B-Instruct";
 
         const Logo = ({ size = "normal" }) => {
             const dim = size === "large" ? "w-16 h-16" : "w-10 h-10";
@@ -76,8 +75,8 @@
                     <div className="flex-1 flex flex-col items-center justify-center space-y-6 w-full">
                         <Logo size="large" />
                         <div className="text-center">
-                            <h1 className="text-2xl font-bold tracking-tighter text-white">Jarvis Core</h1>
-                            <p className="text-[10px] font-mono text-green-400 tracking-widest uppercase mt-1">Neural Engine • WebGPU</p>
+                            <h1 className="text-2xl font-bold tracking-tighter text-white uppercase">Jarvis Core</h1>
+                            <p className="text-[10px] font-mono text-green-400 tracking-widest uppercase mt-1">Qwen 0.5B • High Fidelity</p>
                         </div>
                         <div className="w-full max-w-[260px] space-y-3">
                             {!error ? (
@@ -92,9 +91,9 @@
                                 </>
                             ) : (
                                 <div className="p-4 border border-red-500/30 bg-red-500/10 rounded-xl text-center">
-                                    <p className="text-red-400 text-[10px] font-mono uppercase font-bold">System Load Failure</p>
+                                    <p className="text-red-400 text-[10px] font-mono uppercase font-bold">Initialization Error</p>
                                     <p className="text-zinc-500 text-[9px] font-mono mt-1 leading-tight">{error}</p>
-                                    <button onClick={() => window.location.reload()} className="mt-4 text-[10px] text-zinc-300 underline uppercase tracking-widest font-bold">Try Reset</button>
+                                    <button onClick={() => window.location.reload()} className="mt-4 text-[10px] text-zinc-300 underline uppercase tracking-widest">Retry Boot</button>
                                 </div>
                             )}
                         </div>
@@ -104,41 +103,11 @@
                         onClick={onEnter}
                         className={`w-full max-w-xs py-4 rounded-2xl font-bold transition-all ${isReady ? 'bg-white text-black active:scale-95 shadow-xl' : 'bg-zinc-900 text-zinc-700'}`}
                     >
-                        {isReady ? "ENGAGE CORE" : "LOADING ENGINE..."}
+                        {isReady ? "ENGAGE CORE" : "STABILIZING ENGINE..."}
                     </button>
                 </div>
             );
         };
-
-        const HomeScreen = ({ onNext }) => (
-            <div className="flex-1 flex flex-col bg-[#08080A] overflow-y-auto no-scrollbar pb-10">
-                <div className="p-6 text-center pt-12">
-                    <Logo />
-                    <h2 className="text-2xl font-semibold mt-4">Neural Link V3</h2>
-                    <div className="mt-4 p-4 rounded-2xl bg-green-900/10 border border-green-500/20 max-w-xs mx-auto">
-                        <p className="text-xs text-green-200 leading-relaxed font-medium">
-                            <i className="ph ph-shield-check mr-2"></i>
-                            Optimized for mobile. High-performance inference via WebGPU.
-                        </p>
-                    </div>
-                </div>
-                <div className="px-6 space-y-6 text-center">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Capabilities</p>
-                    <div className="grid gap-2">
-                        {["Text Synthesis", "Problem Solving", "Context Awareness"].map(item => (
-                            <div key={item} className="glass p-3 rounded-xl text-xs text-zinc-300">
-                                {item}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="mt-auto p-6 pt-10">
-                    <button onClick={onNext} className="w-full py-4 bg-green-600 rounded-2xl font-bold text-white shadow-lg active:scale-95 transition-transform">
-                        START SESSION
-                    </button>
-                </div>
-            </div>
-        );
 
         const ChatScreen = ({ pipe }) => {
             const [messages, setMessages] = React.useState([]);
@@ -158,23 +127,31 @@
                 setIsThinking(true);
 
                 try {
-                    // Chat formatting for TinyLlama
-                    const prompt = `<|system|>\nYou are Jarvis, a helpful assistant.</s>\n<|user|>\n${text}</s>\n<|assistant|>\n`;
+                    // Optimized Qwen Chat Template for Transformers.js v2
+                    const prompt = `<|im_start|>system\nYou are Jarvis, a sophisticated and helpful AI assistant.<|im_end|>\n<|im_start|>user\n${text}<|im_end|>\n<|im_start|>assistant\n`;
                     
                     const res = await pipe(prompt, { 
-                        max_new_tokens: 150, 
+                        max_new_tokens: 256, 
                         temperature: 0.7, 
                         do_sample: true,
-                        top_p: 0.95,
+                        top_p: 0.9,
+                        repetition_penalty: 1.1,
+                        stop: ["<|im_end|>", "<|endoftext|>"]
                     });
                     
                     const fullResponse = res[0].generated_text;
-                    const reply = fullResponse.split('<|assistant|>\n')[1]?.split('</s>')[0]?.trim() || "Response generation error.";
+                    // Robust extraction logic for ChatML
+                    let reply = fullResponse;
+                    if (fullResponse.includes('<|im_start|>assistant\n')) {
+                        reply = fullResponse.split('<|im_start|>assistant\n').pop().split('<|im_end|>')[0].trim();
+                    } else {
+                        // Fallback for different tokenizer behavior
+                        reply = fullResponse.replace(prompt, '').split('<|im_end|>')[0].trim();
+                    }
                     
-                    setMessages(p => [...p, { role: "assistant", content: reply }]);
+                    setMessages(p => [...p, { role: "assistant", content: reply || "Processing complete." }]);
                 } catch (e) {
-                    console.error("Chat error:", e);
-                    setMessages(p => [...p, { role: "assistant", content: "Local link unstable. Please refresh page." }]);
+                    setMessages(p => [...p, { role: "assistant", content: "Link unstable. Neural buffer error." }]);
                 } finally {
                     setIsThinking(false);
                 }
@@ -185,17 +162,15 @@
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/80 backdrop-blur-xl z-10">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">JARVIS CORE</span>
+                            <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">QWEN 0.5B ACTIVE</span>
                         </div>
-                        <button onClick={() => window.location.reload()} className="text-zinc-600">
-                            <i className="ph ph-arrow-counter-clockwise"></i>
-                        </button>
+                        <button onClick={() => window.location.reload()} className="text-zinc-600"><i className="ph ph-arrow-counter-clockwise"></i></button>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar pb-28">
                         {messages.length === 0 && (
                             <div className="h-full flex flex-col items-center justify-center opacity-30 text-center px-10 pt-20">
-                                <i className="ph ph-cpu text-4xl mb-3 text-green-500"></i>
-                                <p className="text-[10px] font-mono uppercase tracking-widest text-white">Neural Pathway Active</p>
+                                <i className="ph ph-lightning text-4xl mb-3 text-green-500"></i>
+                                <p className="text-[10px] font-mono uppercase tracking-widest text-white">Neural Interface Ready</p>
                             </div>
                         )}
                         {messages.map((m, i) => (
@@ -216,7 +191,7 @@
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black to-transparent pointer-events-none">
                         <div className="max-w-xl mx-auto glass-panel rounded-2xl flex items-center gap-2 p-1 pl-4 pr-1 pointer-events-auto shadow-2xl">
-                            <input className="flex-1 bg-transparent border-none outline-none text-sm py-3 text-white placeholder-zinc-700" placeholder="Ask Jarvis..." value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} />
+                            <input className="flex-1 bg-transparent border-none outline-none text-sm py-3 text-white" placeholder="Input command..." value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} />
                             <button onClick={handleSend} className="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center text-white active:scale-90 transition-transform">
                                 <i className="ph ph-arrow-up font-bold"></i>
                             </button>
@@ -229,34 +204,29 @@
         const App = () => {
             const [screen, setScreen] = React.useState('boot');
             const [pipe, setPipe] = React.useState(null);
-            const [bootStatus, setBootStatus] = React.useState("Detecting Engine...");
+            const [bootStatus, setBootStatus] = React.useState("Detecting GPU...");
             const [progress, setProgress] = React.useState(0);
             const [error, setError] = React.useState(null);
 
             React.useEffect(() => {
                 const init = async () => {
-                    let attempts = 0;
-                    while (!window.transformers && attempts < 50) {
+                    // Wait for script to load
+                    while (!window.transformers) {
                         await new Promise(r => setTimeout(r, 100));
-                        attempts++;
-                    }
-                    
-                    if (!window.transformers) {
-                        setError("Handshake failure.");
-                        return;
                     }
 
                     try {
                         const { pipeline } = window.transformers;
                         
-                        // Optimized for mobile WebGPU with public model
+                        // FIX: Explicitly set model_file_name to 'model' to avoid searching for merged/quantized naming conventions that might not exist in the repo
                         const instance = await pipeline('text-generation', MODEL_ID, {
                             device: 'webgpu',
-                            dtype: 'q4', // 4-bit quantization
+                            dtype: 'q4', 
+                            model_file_name: 'model', // Essential fix for Qwen2.5 on Transformers.js v2
                             progress_callback: (d) => {
                                 if (d.status === 'progress') setProgress(d.progress);
-                                if (d.file) setBootStatus(`Syncing: ${d.file.split('/').pop()}`);
-                                if (d.status === 'ready') setBootStatus("Compiling...");
+                                if (d.file) setBootStatus(`Core Sync: ${d.file.split('/').pop()}`);
+                                if (d.status === 'ready') setBootStatus("Optimizing Shaders");
                             }
                         });
 
@@ -265,7 +235,7 @@
                         setProgress(100);
                     } catch (e) {
                         console.error("Boot error:", e);
-                        setError("Model fetch failed. Check network or WebGPU support.");
+                        setError(e.message || "WebGPU environment error.");
                     }
                 };
                 init();
@@ -273,8 +243,7 @@
 
             return (
                 <div className="flex-1 flex flex-col h-full w-full bg-black">
-                    {screen === 'boot' && <BootScreen status={bootStatus} progress={progress} error={error} onEnter={() => setScreen('home')} />}
-                    {screen === 'home' && <HomeScreen onNext={() => setScreen('chat')} />}
+                    {screen === 'boot' && <BootScreen status={bootStatus} progress={progress} error={error} onEnter={() => setScreen('chat')} />}
                     {screen === 'chat' && <ChatScreen pipe={pipe} />}
                 </div>
             );
